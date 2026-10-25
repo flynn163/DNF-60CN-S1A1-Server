@@ -161,6 +161,21 @@ EnableMouseWheel=1
 dotnet run --project .\tests\DFLegacy.SmokeTests\DFLegacy.SmokeTests.csproj -c Release
 ```
 
+## 云端构建
+
+GitHub Actions 会在提交到 `main`、提交 Pull Request 或手动运行时执行检查：
+
+- 在 Windows 上分别验证 Debug、Release，运行不依赖外部资源的业务冒烟测试。
+- 验证未安装原生随机桥接时的回退，以及装有桥接时的测试。
+- 构建并测试 x86 IJL15 和 x64 随机桥接，编译启动器；不会启动游戏或执行图形设备检查。
+- 真实 PVF 和客户端联调仍需本地完成，云端通过不代表这些检查已经通过。
+
+主分支的全部检查通过后，会生成包含服务端、启动器、两个原生模块和 Web 页面的 Windows x64 测试包。包内自带 .NET 运行时，不需要另装运行库；配置使用相对路径和公开测试凭据，不包含客户端、PVF、NPK 或账号存档。首次使用仍需设置客户端及 PVF 路径。
+
+测试包的 `Server` 和 `Launcher` 分目录存放，避免两种运行时的同名文件相互覆盖。配置好路径后，先启动 `Server/DFLegacy.Server.exe`，再运行 `Launcher/DFLegacy.Launcher.exe`；此测试包默认不由启动器自动拉起服务端。
+
+测试包可在仓库的 **Actions → CI → Artifacts** 下载，保留 14 天；诊断日志保留 7 天。压缩包旁附有 SHA-256 校验文件，包内另附逐文件校验清单。
+
 ## 许可证
 
 源码使用 **BSD Zero Clause（0BSD）许可证**，详见仓库根目录的 `LICENSE`。该许可证不授予客户端或其他第三方资源的使用与分发权利。
