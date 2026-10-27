@@ -8,6 +8,7 @@ using DFLegacy.Server;
 using Microsoft.Extensions.Logging.Abstractions;
 
 var failures = new List<string>();
+var fixturesOnly = args.Contains("--fixtures-only", StringComparer.OrdinalIgnoreCase);
 
 static ScriptFileSystem CreateScripts(ServerOptions options) =>
     new(options, NullLogger<ScriptFileSystem>.Instance);
@@ -354,7 +355,7 @@ CheckThrows<ArgumentOutOfRangeException>(
     "popup notification rejects strings that do not fit the client buffer");
 
 var unpackedPvpPath = @"D:\DFLegacy\.tmp\pvf2008-work-20260808\working";
-if (Directory.Exists(unpackedPvpPath))
+if (!fixturesOnly && Directory.Exists(unpackedPvpPath))
 {
     var pvpScripts = CreateScripts(new ServerOptions
     {
@@ -7587,8 +7588,8 @@ finally
     Directory.Delete(championDropFixtureRoot, recursive: true);
 }
 
-var realPvfPath = Environment.GetEnvironmentVariable("DF2008_REAL_PVF_PATH");
-if (string.IsNullOrWhiteSpace(realPvfPath)
+var realPvfPath = fixturesOnly ? null : Environment.GetEnvironmentVariable("DF2008_REAL_PVF_PATH");
+if (!fixturesOnly && string.IsNullOrWhiteSpace(realPvfPath)
     && File.Exists(@"D:\DFLegacy\DF2008\Script.pvf"))
 {
     realPvfPath = @"D:\DFLegacy\DF2008\Script.pvf";
@@ -9613,6 +9614,11 @@ Check(generatedClearReward.FreeGoldAmount == 388,
                 generatedRecipe,
                 MonsterDropKind.Recipe),
         "gold, equipment, recipe and world-drop branches can coexist while zero-weight pools stay empty");
+}
+
+if (fixturesOnly || string.IsNullOrWhiteSpace(realPvfPath) || !File.Exists(realPvfPath))
+{
+    Console.WriteLine("External resource integration checks skipped; synthetic fixture checks are enabled.");
 }
 
 if (failures.Count > 0)

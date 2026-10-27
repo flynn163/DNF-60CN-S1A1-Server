@@ -170,7 +170,19 @@ namespace
         std::array<unsigned char, 6> Replacement;
     };
 
-    constexpr std::array<CodePatch, 37> Patches = { {
+    constexpr std::array<CodePatch, 39> Patches = { {
+        {
+            dfl::dnf_patches::RepairAllWornEquipmentOnly,
+            dfl::dnf_patches::detail::RepairAllScopePatches[0].Address,
+            dfl::dnf_patches::detail::RepairAllScopePatches[0].Expected,
+            dfl::dnf_patches::detail::RepairAllScopePatches[0].Replacement
+        },
+        {
+            dfl::dnf_patches::RepairAllWornEquipmentOnly,
+            dfl::dnf_patches::detail::RepairAllScopePatches[1].Address,
+            dfl::dnf_patches::detail::RepairAllScopePatches[1].Expected,
+            dfl::dnf_patches::detail::RepairAllScopePatches[1].Replacement
+        },
         {
             dfl::dnf_patches::DisableDebuggerDetection,
             0x0040AEE0,

@@ -1,5 +1,9 @@
 #include "dflegacy_random.h"
 
+// Keep assertions active in optimized test builds as well.
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 #include <cassert>
 #include <cstdint>
 
